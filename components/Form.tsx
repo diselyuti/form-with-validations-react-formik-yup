@@ -10,7 +10,11 @@ import IDoctorSpeciality from '@/types/IDoctorSpeciality';
 import useDoctors from '@/hooks/useDoctors';
 import IDoctor from '@/types/IDoctor';
 
-const Form = () => {
+const Form = ({
+  handleSubmit,
+}: {
+  handleSubmit: (formData: IUser) => void;
+}) => {
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -27,7 +31,7 @@ const Form = () => {
         .matches(/^\D+$/, 'Name should not contain numbers')
         .required('Required'),
       birthDate: Yup.string()
-        .required('Birth Date is required')
+        .required('Birthday Date is required')
         .test('age', 'Age should be bigger than 0', function (value) {
           return Date.now() - new Date(value).getTime() > 0;
         }),
@@ -61,12 +65,12 @@ const Form = () => {
     }),
     onSubmit: (values) => {
       const formattedDate = formatDate(values.birthDate);
-      console.log('check date format here:', formattedDate);
       const formattedValues = {
         ...values,
         birthDate: formattedDate,
       };
-      alert(JSON.stringify(formattedValues, null, 2));
+
+      handleSubmit(formattedValues);
     },
   });
 
@@ -177,6 +181,7 @@ const Form = () => {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           value={formik.values.birthDate}
+          data-testid="birthDate-input"
         />
         {formik.touched.birthDate && formik.errors.birthDate ? (
           <div className="text-red-500 text-sm">{formik.errors.birthDate}</div>
@@ -225,7 +230,7 @@ const Form = () => {
           <div className="text-red-500 text-sm">{formik.errors.cityId}</div>
         ) : null}
         {errorCities && (
-          <div className="text-red-500 text-sm">{errorDoctorSpecialities}</div>
+          <div className="text-red-500 text-sm">{errorCities}</div>
         )}
       </label>
 
@@ -289,7 +294,7 @@ const Form = () => {
           <div className="text-red-500 text-sm">{formik.errors.doctorId}</div>
         ) : null}
         {errorDoctors && (
-          <div className="text-red-500 text-sm">{errorDoctorSpecialities}</div>
+          <div className="text-red-500 text-sm">{errorDoctors}</div>
         )}
       </label>
 
