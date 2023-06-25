@@ -144,7 +144,11 @@ const Form = ({
   ]);
 
   useEffect(() => {
-    if (filteredDoctors.length === 0) {
+    const selectedDoctorId = formik.values.doctorId;
+    const selectedDoctor = filteredDoctors.find((doctor: IDoctor) => {
+      return doctor.id === selectedDoctorId;
+    });
+    if (!selectedDoctor) {
       formik.setFieldValue('doctorId', '');
     }
   }, [filteredDoctors]);
